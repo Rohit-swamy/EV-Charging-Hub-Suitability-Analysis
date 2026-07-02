@@ -1,5 +1,9 @@
 # ⚡ EV Charging Hub Suitability Analysis
 
+## 🚀 Live Demo
+
+https://ev-charging-app-suitability-analysis.streamlit.app/
+
 ## Overview
 
 The **EV Charging Hub Suitability Analysis** project is a Deep Learning-based web application that analyzes satellite images and predicts whether a location is suitable for establishing an EV charging station.
