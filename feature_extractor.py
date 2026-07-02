@@ -1,30 +1,36 @@
-import numpy as np
 import cv2
+import numpy as np
+from pathlib import Path
 from tensorflow.keras.models import load_model
 
 IMG_SIZE = 64
 
-# Load trained model
-model = load_model("cnn_model.h5")
+MODEL_PATH = Path(__file__).parent / "cnn_model.h5"
+model = load_model(MODEL_PATH)
+
+
 def predict_location(image):
 
     img = cv2.resize(image, (IMG_SIZE, IMG_SIZE))
-    img = img / 255.0
-    img = img.reshape(1, 64, 64, 3)
+    img = img.astype("float32") / 255.0
+    img = img.reshape(1, IMG_SIZE, IMG_SIZE, 3)
 
     prediction = model.predict(img, verbose=0)[0]
 
     predicted_class = np.argmax(prediction)
 
-    classes = ["Industrial", "Residential", "Highway"]
+    classes = [
+        "Industrial",
+        "Residential",
+        "Highway"
+    ]
 
     land_type = classes[predicted_class]
 
-    # Rule-based scoring
     if land_type == "Highway":
 
         score = 0.90
-        label = "Highly Suitable"
+        recommendation = "Highly Suitable"
 
         commercial = 0.70
         traffic = 0.95
@@ -33,7 +39,7 @@ def predict_location(image):
     elif land_type == "Industrial":
 
         score = 0.75
-        label = "Suitable"
+        recommendation = "Suitable"
 
         commercial = 0.90
         traffic = 0.65
@@ -42,14 +48,15 @@ def predict_location(image):
     else:
 
         score = 0.45
-        label = "Moderately Suitable"
+        recommendation = "Moderately Suitable"
 
         commercial = 0.50
         traffic = 0.40
         powerline = 0.45
 
     return (
-        label,
+        land_type,
+        recommendation,
         score,
         commercial,
         traffic,
